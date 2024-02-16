@@ -1,13 +1,9 @@
 import telebot
-import commands_handler, message_handler, add_new
-from telebot import types
-from base import create_table, add_anekdot, get_anekdots, rand_anekdot
+import commands_handler, message_handler
+import base
 
 
 bot = telebot.TeleBot('6977419128:AAGv0ygxxpFI5pp_Vy7mGMEvJ8ajKqgPewY')
-
-# Создаем таблицу в БД
-create_table()
 
 @bot.message_handler(commands=['start', 'stop', 'help'])
 def handle_start_stop(message):
@@ -32,25 +28,19 @@ def answer1(message):
         bot.send_message(message.chat.id, "Зачем написал тогда?")
     elif (message.text == "Случайный анекдот"):
         random(message)
-    elif (message.text == "Категории"):
-        category(message)
     elif (message.text == "Топ анекдотов"):
         top(message)
-    elif (message.text == "Добавить анекдот"):
-        add_new.add_py(bot, message)
+    elif (message.text == "Мои анекдоты"):
+        my_anek(message)
 
 
-def category(message):
-    bot.send_message(message.chat.id, "Выбери категорию:")
+def my_anek(message):
+    bot.send_message(message.chat.id, "Топ анекдотов по оценкам пользователей")
 
 def random(message):
-    random_joke = rand_anekdot()
-    bot.send_message(message.chat.id, random_joke)
+    bot.send_message(message.chat.id, "Купил мужик шляпу а она ему как раз")
 
 def top(message):
-    # Получаем список анекдотов и отправляем их в чат
-    anekdots = get_anekdots()
-    anekdot_list = '\n'.join([f'{anekdot[0]}. {anekdot[1]} (Категория: {anekdot[3]}, Рейтинг: {anekdot[4]})' for anekdot in anekdots])
-    bot.reply_to(message, f'Топ анекдотов:\n{anekdot_list}')
+    bot.send_message(message.chat.id, "Топ анекдотов по оценкам пользователей")
 
 bot.polling()
