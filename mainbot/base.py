@@ -77,3 +77,36 @@ def delete_anekbd(user_id, anekdot_number):
         aneki.close()
         return False
     
+
+def change_anekbd(user_id, anekdot_number, new_title, new_text):
+    aneki = connect_bd()
+    cursor = aneki.cursor()
+
+    # Проверить, существует ли анекдот с указанным номером для данного пользователя
+    select_query = '''
+    SELECT anek_id
+    FROM anekitab
+    WHERE user_id = ?;
+    '''
+    cursor.execute(select_query, (user_id,))
+    result = cursor.fetchall()
+    if len(result) >= anekdot_number:
+        # Если анекдот с указанным номером существует, получить его идентификатор
+        anek_id_to_update = result[anekdot_number - 1][0]
+
+        # SQL-запрос для обновления заголовка анекдота
+        update_query = '''
+        UPDATE anekitab
+        SET anek_name = ?, anek_text = ?
+        WHERE anek_id = ? AND user_id = ?;
+        '''
+
+        # Выполнить запрос на обновление
+        cursor.execute(update_query, (new_title, new_text, anek_id_to_update, user_id))
+        aneki.commit()
+        aneki.close()
+        return True
+    else:
+        # Анекдот с указанным номером не найден
+        aneki.close()
+        return False

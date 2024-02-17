@@ -2,7 +2,7 @@ import telebot
 import sqlite3
 import commands_handler, message_handler
 import base
-from base import create_table, my_anekbd, add_anekbd, delete_anekbd
+from base import create_table, my_anekbd, add_anekbd, delete_anekbd, change_anekbd
 from telebot import types
 
 bot = telebot.TeleBot('6977419128:AAGv0ygxxpFI5pp_Vy7mGMEvJ8ajKqgPewY')
@@ -44,6 +44,9 @@ def answer1(message):
         message_handler.action(bot, message)
     elif (message.text == "Удалить"):
         delete_anek(message)
+    elif (message.text == "Изменить"):
+        change_anek(message)
+
 
 
 def my_anek(message):
@@ -56,7 +59,7 @@ def my_anek(message):
         bot.send_message(message.chat.id, "У вас нет ни одного анекдота. Хотите добавить?", reply_markup=markup)
     else:
         anekdoti = my_anekbd(desired_user_id)
-        anekdot_list = '\n'.join([f'{idx+1}. {anekdot[0]}, \n {anekdot[1]}' for idx, anekdot in enumerate(anekdoti)])
+        anekdot_list = '\n'.join([f'{idx+1}. {anekdot[0]}: \n {anekdot[1]}' for idx, anekdot in enumerate(anekdoti)])
         bot.reply_to(message, f'Твои анекдотики:\n{anekdot_list}')
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
         btn3 = types.KeyboardButton("Добавить")
@@ -88,6 +91,7 @@ def delete_anek(message):
     bot.send_message(message.chat.id, "Введите номер анекдота, который вы хотите удалить:")
     bot.register_next_step_handler(message, process_delete_input)
     
+
 def process_delete_input(message):
     try:
         # Попытка преобразовать введенный текст в целое число
@@ -102,6 +106,34 @@ def process_delete_input(message):
             bot.send_message(message.chat.id, f"Не удалось найти анекдот с номером {anekdot_number}.")
     except ValueError:
         bot.send_message(message.chat.id, "Пожалуйста, введите корректный номер анекдота.")    
+
+def change_anek(message):
+    bot.send_message(message.chat.id, "Введите номер анекдота, который вы хотите изменить")
+    bot.register_next_step_handler(message, process_change_input)
+
+def process_change_input(message):
+    try:
+        # Попытка преобразовать введенный текст в целое число
+        anekdot_number = int(message.text)
+        
+        bot.send_message(message.chat.id, "Введите новое название анекдота:")
+        bot.register_next_step_handler(message, lambda msg: change_title(msg, anekdot_number))
+    except ValueError:
+        bot.send_message(message.chat.id, "Пожалуйста, введите корректный номер анекдота.")
+
+def change_title(message, anekdot_number):
+    new_title = message.text
+    bot.send_message(message.chat.id, "Введите новый текст анекдота:")
+    bot.register_next_step_handler(message, lambda msg: change_text(msg, new_title, anekdot_number))
+
+def change_text(message, new_title, anekdot_number):
+    new_text = message.text
+    if change_anekbd(message.chat.id, anekdot_number, new_title, new_text):
+            bot.send_message(message.chat.id, f"Анекдот с номером {anekdot_number} успешно изменен.")
+    else:
+            bot.send_message(message.chat.id, f"Не удалось найти анекдот с номером {anekdot_number}.")
+    
+
 
 
 def random(message):
