@@ -2,7 +2,7 @@ import telebot
 import sqlite3
 import commands_handler, message_handler
 import base
-from base import create_table, my_anekbd, add_anekbd, delete_anekbd, change_anekbd
+from base import create_table, my_anekbd, add_anekbd, delete_anekbd, change_anekbd, random_anek
 from telebot import types
 
 bot = telebot.TeleBot('6977419128:AAGv0ygxxpFI5pp_Vy7mGMEvJ8ajKqgPewY')
@@ -137,7 +137,7 @@ def change_text(message, new_title, anekdot_number):
 
 
 def random(message):
-    bot.send_message(message.chat.id, "Купил мужик шляпу а она ему как раз")
+    bot.send_message(message.chat.id, random_anek())
 
 def top(message):
     bot.send_message(message.chat.id, "Топ анекдотов по оценкам пользователей")

@@ -1,5 +1,6 @@
 import sqlite3
 from threading import Lock
+import random
 
 def connect_bd():
     return sqlite3.connect('anekdots.db')
@@ -110,3 +111,12 @@ def change_anekbd(user_id, anekdot_number, new_title, new_text):
         # Анекдот с указанным номером не найден
         aneki.close()
         return False
+    
+
+def random_anek():
+    aneki = connect_bd()
+    cursor = aneki.cursor()
+    cursor.execute('SELECT anek_text FROM anekitab ORDER BY RANDOM() LIMIT 1;')
+    random_row = cursor.fetchone()  
+    return random_row
+
