@@ -2,7 +2,7 @@ import telebot
 import sqlite3
 import commands_handler, message_handler
 import base
-from base import create_table, my_anekbd, add_anekbd
+from base import create_table, my_anekbd, add_anekbd, delete_anekbd
 from telebot import types
 
 bot = telebot.TeleBot('6977419128:AAGv0ygxxpFI5pp_Vy7mGMEvJ8ajKqgPewY')
@@ -42,6 +42,8 @@ def answer1(message):
         add_anek(message)
     elif (message.text == "Назад"):
         message_handler.action(bot, message)
+    elif (message.text == "Удалить"):
+        delete_anek(message)
 
 
 def my_anek(message):
@@ -54,8 +56,16 @@ def my_anek(message):
         bot.send_message(message.chat.id, "У вас нет ни одного анекдота. Хотите добавить?", reply_markup=markup)
     else:
         anekdoti = my_anekbd(desired_user_id)
-        anekdot_list = '\n'.join([f'Название: {anekdot[0]}, Рейтинг: {anekdot[1]}' for anekdot in anekdoti])
+        anekdot_list = '\n'.join([f'{idx+1}. {anekdot[0]}, \n {anekdot[1]}' for idx, anekdot in enumerate(anekdoti)])
         bot.reply_to(message, f'Твои анекдотики:\n{anekdot_list}')
+        markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+        btn3 = types.KeyboardButton("Добавить")
+        btn4 = types.KeyboardButton("Изменить")
+        markup.row(btn3, btn4)
+        btn5 = types.KeyboardButton("Удалить")
+        btn6 = types.KeyboardButton("Назад")
+        markup.row(btn5, btn6)
+        bot.send_message(message.chat.id, "Выберите действие:", reply_markup=markup)
 
 
 
@@ -74,8 +84,26 @@ def get_joke(message, title):
     add_anekbd(title, joke, id)
     bot.send_message(message.chat.id, "Анекдот успешно добавлен")
 
+def delete_anek(message):
+    bot.send_message(message.chat.id, "Введите номер анекдота, который вы хотите удалить:")
+    bot.register_next_step_handler(message, process_delete_input)
     
-    
+def process_delete_input(message):
+    try:
+        # Попытка преобразовать введенный текст в целое число
+        anekdot_number = int(message.text)
+
+        # Удаление анекдота с указанным номером из базы данных
+        success = delete_anekbd(message.chat.id, anekdot_number)
+
+        if success:
+            bot.send_message(message.chat.id, f"Анекдот с номером {anekdot_number} успешно удален.")
+        else:
+            bot.send_message(message.chat.id, f"Не удалось найти анекдот с номером {anekdot_number}.")
+    except ValueError:
+        bot.send_message(message.chat.id, "Пожалуйста, введите корректный номер анекдота.")    
+
+
 def random(message):
     bot.send_message(message.chat.id, "Купил мужик шляпу а она ему как раз")
 

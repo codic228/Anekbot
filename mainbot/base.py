@@ -47,3 +47,33 @@ def add_anekbd(title, joke, id):
     aneki.commit()
     aneki.close()
 
+
+def delete_anekbd(user_id, anekdot_number):
+    aneki = connect_bd()
+    cursor = aneki.cursor()
+
+    # Проверить, существует ли анекдот с указанным номером для данного пользователя
+    select_query = '''
+    SELECT anek_id
+    FROM anekitab
+    WHERE user_id = ?;
+    '''
+    cursor.execute(select_query, (user_id,))
+    result = cursor.fetchall()
+
+    if len(result) >= anekdot_number:
+        # Если анекдот с указанным номером существует, удалить его
+        anek_id_to_delete = result[anekdot_number - 1][0]
+        delete_query = '''
+        DELETE FROM anekitab
+        WHERE anek_id = ?;
+        '''
+        cursor.execute(delete_query, (anek_id_to_delete,))
+        aneki.commit()
+        aneki.close()
+        return True
+    else:
+        # Анекдот с указанным номером не найден
+        aneki.close()
+        return False
+    
