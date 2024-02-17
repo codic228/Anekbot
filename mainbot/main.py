@@ -2,8 +2,8 @@ import telebot
 import sqlite3
 import commands_handler, message_handler
 import base
-from base import create_table, my_anekbd
-
+from base import create_table, my_anekbd, add_anekbd
+from telebot import types
 
 bot = telebot.TeleBot('6977419128:AAGv0ygxxpFI5pp_Vy7mGMEvJ8ajKqgPewY')
 
@@ -38,15 +38,42 @@ def answer1(message):
         top(message)
     elif (message.text == "Мои анекдоты"):
         my_anek(message)
+    elif (message.text == "Добавить"):
+        add_anek(message)
+    elif (message.text == "Назад"):
+        message_handler.action(bot, message)
 
 
 def my_anek(message):
-    bot.send_message(message.chat.id, "Список твоих анекдотов")
     desired_user_id = message.chat.id
-    if my_anekbd(desired_user_id) == True:
-        bot.send_message(message.chat.id,  "Есть анекдоты")
+    if my_anekbd(desired_user_id) == False:
+        markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+        btn1 = types.KeyboardButton("Добавить")
+        btn2 = types.KeyboardButton("Назад")
+        markup.row(btn1, btn2)
+        bot.send_message(message.chat.id, "У вас нет ни одного анекдота. Хотите добавить?", reply_markup=markup)
     else:
-        bot.send_message(message.chat.id,  "Нет анекдоты")
+        anekdoti = my_anekbd(desired_user_id)
+        anekdot_list = '\n'.join([f'Название: {anekdot[0]}, Рейтинг: {anekdot[1]}' for anekdot in anekdoti])
+        bot.reply_to(message, f'Твои анекдотики:\n{anekdot_list}')
+
+
+
+def add_anek(message):
+    bot.send_message(message.chat.id, "Название анекдота:")
+    bot.register_next_step_handler(message, get_title)
+
+def get_title(message):
+    title = message.text
+    bot.send_message(message.chat.id, "Текст анекдота:")
+    bot.register_next_step_handler(message, lambda msg: get_joke(msg, title))
+
+def get_joke(message, title):
+    joke = message.text
+    id = message.chat.id
+    add_anekbd(title, joke, id)
+    bot.send_message(message.chat.id, "Анекдот успешно добавлен")
+
     
     
 def random(message):

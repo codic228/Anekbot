@@ -31,7 +31,19 @@ def my_anekbd(desired_user_id):
     cursor.execute(select_query, (desired_user_id,))
     result = cursor.fetchone()
     if result[0] > 0:
-        return(True)
+        cursor.execute('SELECT anek_name, anek_text FROM anekitab WHERE user_id = ?', (desired_user_id,))
+        anekdoti = cursor.fetchall()
+        return anekdoti 
     else:
        return(False)
+
+def add_anekbd(title, joke, id):
+    aneki = connect_bd()
+    cursor = aneki.cursor()
+    cursor.execute('''
+        INSERT INTO anekitab (anek_name, anek_text,  user_id)
+        VALUES (?, ?, ?)
+                   ''', (title, joke, id))
+    aneki.commit()
+    aneki.close()
 
