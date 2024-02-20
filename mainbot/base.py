@@ -13,7 +13,8 @@ def create_table():
         anek_name TEXT,
         anek_text TEXT,
         anek_rating INTEGER DEFAULT 0,
-        user_id INTEGER
+        user_id INTEGER,
+        complaints INTEGER DEFAULT 0
     );
     ''')
 
@@ -116,7 +117,77 @@ def change_anekbd(user_id, anekdot_number, new_title, new_text):
 def random_anek():
     aneki = connect_bd()
     cursor = aneki.cursor()
-    cursor.execute('SELECT anek_text FROM anekitab ORDER BY RANDOM() LIMIT 1;')
+    cursor.execute('SELECT anek_id, anek_text FROM anekitab ORDER BY RANDOM() LIMIT 1;')
     random_row = cursor.fetchone()  
     return random_row
 
+def random_anek_mark_plus(ran_an_id):
+    aneki = connect_bd()
+    cursor = aneki.cursor()
+    update_query = '''
+    UPDATE anekitab
+    SET anek_rating = anek_rating + 1
+    WHERE anek_id = ?;  -- Условие по id
+    '''
+    record_id = ran_an_id  # Замените на нужный id
+    cursor.execute(update_query, (record_id,))
+    aneki.commit()
+    aneki.close()
+
+
+def random_anek_mark_minus(ran_an_id):
+    aneki = connect_bd()
+    cursor = aneki.cursor()
+    update_query = '''
+    UPDATE anekitab
+    SET anek_rating = anek_rating - 1
+    WHERE anek_id = ?;  -- Условие по id
+    '''
+    record_id = ran_an_id  # Замените на нужный id
+    cursor.execute(update_query, (record_id,))
+    aneki.commit()
+    aneki.close()
+
+def complaints_plus(ran_an_id):
+    aneki = connect_bd()
+    cursor = aneki.cursor()
+    update_query = '''
+    UPDATE anekitab
+    SET complaints = complaints + 1
+    WHERE anek_id = ?;  -- Условие по id
+    '''
+    record_id = ran_an_id  # Замените на нужный id
+    cursor.execute(update_query, (record_id,))
+    aneki.commit()
+    aneki.close()
+
+
+def top_anek_bd():
+    aneki = connect_bd()
+    cursor = aneki.cursor()
+    select_query = '''
+    SELECT *
+    FROM anekitab
+    ORDER BY anek_rating DESC
+    LIMIT 10;
+    '''
+    cursor.execute(select_query)
+    top_records = cursor.fetchall()
+    aneki.close()
+
+    return top_records
+    
+
+def top_anek_bd_select(indx):
+    aneki = connect_bd()
+    cursor = aneki.cursor()
+    offset_value = indx
+    cursor.execute(f'''
+    SELECT *
+    FROM anekitab
+    ORDER BY anek_rating DESC
+    LIMIT 1 OFFSET {offset_value};
+    ''')
+    top_records = cursor.fetchall()
+    aneki.close()
+    return top_records
