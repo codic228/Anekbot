@@ -65,7 +65,7 @@ def my_anek(message):
         bot.send_message(message.chat.id, "У вас нет ни одного анекдота. Хотите добавить?", reply_markup=markup)
     else:
         anekdoti = my_anekbd(desired_user_id)
-        anekdot_list = '\n'.join([f'{idx+1}. {anekdot[0]}:' for idx, anekdot in enumerate(anekdoti)])
+        anekdot_list = '\n'.join([f'{idx+1}. {anekdot[0]}' for idx, anekdot in enumerate(anekdoti)])
         bot.reply_to(message, f'Твои анекдотики:\n{anekdot_list}')
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
         btn3 = types.KeyboardButton("Добавить")
