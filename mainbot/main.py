@@ -1,13 +1,13 @@
 import telebot
 import commands_handler, message_handler, random_mod, top_mod, myanek_mod
-from base import create_table
+from base import create_table, create_table1
 from telebot import types
 bot = telebot.TeleBot('6977419128:AAGv0ygxxpFI5pp_Vy7mGMEvJ8ajKqgPewY')
 
 
 
 create_table()
-
+create_table1()
 @bot.message_handler(commands=['start', 'stop', 'help', 'menu'])
 def handle_start_stop(message):
     if message.text.lower() == '/start':

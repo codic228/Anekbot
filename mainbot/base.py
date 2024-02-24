@@ -1,6 +1,6 @@
 import sqlite3
 from threading import Lock
-import random
+
 
 def connect_bd():
     return sqlite3.connect('anekdots.db')
@@ -22,6 +22,23 @@ def create_table():
     aneki.close()
 
 
+def create_table1():
+    view = connect_bd()
+    cursor = view.cursor()
+
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS viewed (
+            vuser_id INTEGER ,
+            vanek_num INTEGER,
+            UNIQUE (vuser_id, vanek_num)
+        );
+    ''')
+
+    view.commit()
+    view.close()
+
+
+
 def my_anekbd(desired_user_id):
     aneki = connect_bd()
     cursor = aneki.cursor()
@@ -38,6 +55,33 @@ def my_anekbd(desired_user_id):
         return anekdoti 
     else:
        return(False)
+    
+def show_my_anekbd(user_id, anekdot_number):
+    aneki = connect_bd()
+    cursor = aneki.cursor()
+    # Проверить, существует ли анекдот с указанным номером для данного пользователя
+    select_query = '''
+    SELECT anek_id
+    FROM anekitab
+    WHERE user_id = ?;
+    '''
+    cursor.execute(select_query, (user_id,))
+    result = cursor.fetchall()
+    if len(result) >= anekdot_number:
+        anek_id_to_show = result[anekdot_number - 1][0]
+        show_query = '''
+        SELECT * FROM anekitab
+        WHERE anek_id = ? 
+        LIMIT 1;
+        '''
+        cursor.execute(show_query, (anek_id_to_show,))
+        selected_anek = cursor.fetchone()
+        aneki.close()
+        return selected_anek
+    else:
+        # Анекдот с указанным номером не найден
+        aneki.close()
+        return False
 
 def add_anekbd(title, joke, id):
     aneki = connect_bd()
@@ -71,6 +115,7 @@ def delete_anekbd(user_id, anekdot_number):
         WHERE anek_id = ?;
         '''
         cursor.execute(delete_query, (anek_id_to_delete,))
+        cursor.execute('UPDATE viewed SET vanek_num = vanek_num - 1 WHERE vanek_num >= ?', (anekdot_number - 1,))
         aneki.commit()
         aneki.close()
         return True
@@ -114,12 +159,32 @@ def change_anekbd(user_id, anekdot_number, new_title, new_text):
         return False
     
 
-def random_anek():
+
+def act_not_random_anek(user_id):
     aneki = connect_bd()
     cursor = aneki.cursor()
-    cursor.execute('SELECT anek_id, anek_text FROM anekitab ORDER BY RANDOM() LIMIT 1;')
-    random_row = cursor.fetchone()  
-    return random_row
+    cursor.execute('SELECT COUNT(*) FROM viewed WHERE vuser_id = ?;', (user_id,))
+    count = cursor.fetchone()[0]
+    if count == 0:
+        cursor.execute('''
+        INSERT INTO viewed(vuser_id, vanek_num)
+        VALUES (?, 0);
+        ''', (user_id,))
+        aneki.commit()
+    cursor.execute('SELECT COUNT(*) FROM anekitab')
+    anek_count = cursor.fetchone()[0]
+    cursor.execute('SELECT vanek_num FROM viewed WHERE vuser_id = ?', (user_id,))
+    anek_num = cursor.fetchone()[0]
+    if anek_count == anek_num:
+        return False
+    elif anek_count > anek_num:
+        cursor.execute('SELECT anek_id, anek_text FROM anekitab LIMIT 1 OFFSET (SELECT vanek_num FROM viewed WHERE vuser_id = ?);', (user_id,))
+        anek = cursor.fetchone()
+        cursor.execute('UPDATE viewed SET vanek_num = vanek_num + 1 WHERE vuser_id = ?', (user_id,))
+        aneki.commit()
+        return anek
+
+
 
 def random_anek_mark_plus(ran_an_id):
     aneki = connect_bd()

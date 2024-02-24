@@ -1,18 +1,23 @@
 import message_handler
 from telebot import types
-from base import random_anek, random_anek_mark_plus, random_anek_mark_minus, complaints_plus
+from base import random_anek_mark_plus, random_anek_mark_minus, complaints_plus, act_not_random_anek
 
 def random(bot, message):
-    markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    btn1 = types.KeyboardButton("Лайк")
-    btn2 = types.KeyboardButton("Дизлайк")
-    markup.row(btn1, btn2)
-    btn3 = types.KeyboardButton("Ошибка в анекдоте")
-    btn4 = types.KeyboardButton("Назад")
-    markup.row(btn3, btn4)
-    ran_an = random_anek()
-    bot.send_message(message.chat.id, ran_an[1], reply_markup=markup)
-    bot.register_next_step_handler(message,  lambda msg: chek_next_step(msg, ran_an[0], bot))
+    user_id = message.chat.id
+    ran_an = act_not_random_anek(user_id)
+    if ran_an == False:
+        bot.send_message(message.chat.id,"Похоже ты посмотрел все анекдоты... Очень сильно...\nЧтож, жди новых, можешь пока свои добавить<3")
+        message_handler.action(bot, message)
+    else:
+        markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+        btn1 = types.KeyboardButton("Лайк")
+        btn2 = types.KeyboardButton("Дизлайк")
+        markup.row(btn1, btn2)
+        btn3 = types.KeyboardButton("Ошибка в анекдоте")
+        btn4 = types.KeyboardButton("Назад")
+        markup.row(btn3, btn4)
+        bot.send_message(message.chat.id, ran_an[1], reply_markup=markup)
+        bot.register_next_step_handler(message,  lambda msg: chek_next_step(msg, ran_an[0], bot))
 
 
 
