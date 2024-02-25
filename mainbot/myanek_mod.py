@@ -72,7 +72,6 @@ def get_joke(message, title, bot):
     add_anekbd(title, joke, id)
     bot.send_message(message.chat.id, "Анекдот успешно добавлен")
     my_anek(bot, message)
-    mailing.mail(bot, message)
 
 
 
