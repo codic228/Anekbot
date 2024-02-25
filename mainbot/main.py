@@ -1,16 +1,17 @@
 import telebot
-import commands_handler, message_handler, random_mod, top_mod, myanek_mod
-from base import create_table, create_table1
+import commands_handler, message_handler, random_mod, top_mod, myanek_mod, mailing
+from base import create_table, create_table1, add_new_member
 from telebot import types
+import random
 bot = telebot.TeleBot('6977419128:AAGv0ygxxpFI5pp_Vy7mGMEvJ8ajKqgPewY')
-
 
 
 create_table()
 create_table1()
-@bot.message_handler(commands=['start', 'stop', 'help', 'menu'])
+@bot.message_handler(commands=['start', 'stop', 'help', 'menu', 'send'])
 def handle_start_stop(message):
     if message.text.lower() == '/start':
+        add_new_member(message.chat.id)
         commands_handler.start(bot, message)
     elif message.text.lower() == '/stop':
         bot.send_message(message.chat.id, f"Попытка остановить бота от {message.chat.id}...")
@@ -22,8 +23,15 @@ def handle_start_stop(message):
         commands_handler.help(bot, message)
     elif message.text.lower() == '/menu':
         message_handler.action(bot, message)
+    # elif message.text.lower() == '/send':
+    #     if (message.chat.id == 535601294):
+    #         bot.send_message(message.chat.id, "Введи сообщение.")
+    #         bot.register_next_step_handler(message, lambda msg: send(msg, bot))
+    #     else:
+    #         bot.send_message(message.chat.id, "Отказано в доступе.")
 
-
+# def send(message, bot):
+#     bot.send_message(6849041155, f"{message.text}")
 
 @bot.message_handler()
 def answer1(message):
@@ -31,8 +39,8 @@ def answer1(message):
         message_handler.action(bot, message)
     elif (message.text == 'Нет'):
         bot.send_message(message.chat.id, "Зачем написал тогда?")
-    elif (message.text == "Случайный анекдот"):
-        random_mod.random(bot, message)
+    elif (message.text == "Читать анекдоты"):
+        random_mod.random1(bot, message)
     elif (message.text == "Топ анекдотов"):
         top_mod.top(bot, message)
     elif (message.text == "Мои анекдоты"):
@@ -45,6 +53,24 @@ def answer1(message):
         myanek_mod.delete_anek(bot, message)
     elif (message.text == "Изменить"):
         myanek_mod.change_anek(bot, message)
-    
+    elif (message.text == "Рассылка анекдотов"):
+        mailing.mail(bot, message)
+    elif (message.text == "Отменить"):
+        message_handler.action(bot, message)
+    else:
+        random_number = random.randint(1, 5)
+        if (random_number == 1):
+            bot.send_message(message.chat.id, "Чувак я не нейросеть я не понимаю че ты говоришь")
+        elif (random_number == 2):
+            bot.send_message(message.chat.id, "Я только анекдоты рассказываю")
+        elif (random_number == 3):
+            bot.send_message(message.chat.id, "Да бля напиши по делу что-то")
+        elif (random_number == 4):
+            bot.send_message(message.chat.id, "Эти сообщения вообще просто записаны в коде и рандомно отправляются когда ты чето не то пишешь гений")
+        elif (random_number == 4):
+            bot.send_message(message.chat.id, "Умоляю просто ответь нормально на мой предыдущий запрос")
+        elif (random_number == 5):
+            bot.send_message(message.chat.id, "Письки")
+
 
 bot.infinity_polling()

@@ -2,16 +2,19 @@ import message_handler
 from telebot import types
 from base import random_anek_mark_plus, random_anek_mark_minus, complaints_plus, act_not_random_anek
 
-def random(bot, message):
+def random1(bot, message):
     user_id = message.chat.id
     ran_an = act_not_random_anek(user_id)
     if ran_an == False:
         bot.send_message(message.chat.id,"Похоже ты посмотрел все анекдоты... Очень сильно...\nЧтож, жди новых, можешь пока свои добавить<3")
         message_handler.action(bot, message)
+    elif ran_an == True:
+        bot.send_message(message.chat.id,"Обалдеть, походу база данных наебнулась или просто в ней нет ни одного анекдота...\nНадеюсь папочка скоро разбереться с этой проблемой и я смогу снова радовать вас анекдотами!")
+        message_handler.action(bot, message)
     else:
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-        btn1 = types.KeyboardButton("Лайк")
-        btn2 = types.KeyboardButton("Дизлайк")
+        btn1 = types.KeyboardButton("👍")
+        btn2 = types.KeyboardButton("👎")
         markup.row(btn1, btn2)
         btn3 = types.KeyboardButton("Ошибка в анекдоте")
         btn4 = types.KeyboardButton("Назад")
@@ -22,15 +25,15 @@ def random(bot, message):
 
 
 def chek_next_step(message, id, bot):
-    if (message.text == "Лайк"):
+    if (message.text == "👍"):
         random_anek_mark_plus(id)
-        random(bot, message)
-    elif (message.text == "Дизлайк"):
+        random1(bot, message)
+    elif (message.text == "👎"):
         random_anek_mark_minus(id)
-        random(bot, message)
+        random1(bot, message)
     elif (message.text == "Назад"):
         message_handler.action(bot, message)
     elif (message.text == "Ошибка в анекдоте"):
          complaints_plus(id)
          bot.send_message(message.chat.id, "Спасибо!")
-         random(bot, message)
+         random1(bot, message)

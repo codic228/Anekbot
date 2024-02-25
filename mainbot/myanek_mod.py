@@ -1,4 +1,4 @@
-import message_handler
+import message_handler, mailing
 from telebot import types
 from base import my_anekbd, add_anekbd, delete_anekbd, change_anekbd, show_my_anekbd
 
@@ -72,6 +72,8 @@ def get_joke(message, title, bot):
     add_anekbd(title, joke, id)
     bot.send_message(message.chat.id, "Анекдот успешно добавлен")
     my_anek(bot, message)
+    mailing.mail(bot, message)
+
 
 
 def delete_anek(bot, message):

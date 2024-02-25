@@ -30,14 +30,25 @@ def create_table1():
         CREATE TABLE IF NOT EXISTS viewed (
             vuser_id INTEGER ,
             vanek_num INTEGER,
-            UNIQUE (vuser_id, vanek_num)
+            issub INTEGER DEFAULT 0,
+            timesub TIME
         );
     ''')
 
     view.commit()
     view.close()
 
-
+def add_new_member(user_id):
+    aneki = connect_bd()
+    cursor = aneki.cursor()
+    cursor.execute('SELECT COUNT(*) FROM viewed WHERE vuser_id = ?;', (user_id,))
+    count = cursor.fetchone()[0]
+    if count == 0:
+        cursor.execute('''
+        INSERT INTO viewed(vuser_id, vanek_num)
+        VALUES (?, 0);
+        ''', (user_id,))
+        aneki.commit()
 
 def my_anekbd(desired_user_id):
     aneki = connect_bd()
@@ -163,26 +174,21 @@ def change_anekbd(user_id, anekdot_number, new_title, new_text):
 def act_not_random_anek(user_id):
     aneki = connect_bd()
     cursor = aneki.cursor()
-    cursor.execute('SELECT COUNT(*) FROM viewed WHERE vuser_id = ?;', (user_id,))
-    count = cursor.fetchone()[0]
-    if count == 0:
-        cursor.execute('''
-        INSERT INTO viewed(vuser_id, vanek_num)
-        VALUES (?, 0);
-        ''', (user_id,))
-        aneki.commit()
     cursor.execute('SELECT COUNT(*) FROM anekitab')
     anek_count = cursor.fetchone()[0]
-    cursor.execute('SELECT vanek_num FROM viewed WHERE vuser_id = ?', (user_id,))
-    anek_num = cursor.fetchone()[0]
-    if anek_count == anek_num:
-        return False
-    elif anek_count > anek_num:
-        cursor.execute('SELECT anek_id, anek_text FROM anekitab LIMIT 1 OFFSET (SELECT vanek_num FROM viewed WHERE vuser_id = ?);', (user_id,))
-        anek = cursor.fetchone()
-        cursor.execute('UPDATE viewed SET vanek_num = vanek_num + 1 WHERE vuser_id = ?', (user_id,))
-        aneki.commit()
-        return anek
+    if anek_count == 0:
+        return True
+    else:
+        cursor.execute('SELECT vanek_num FROM viewed WHERE vuser_id = ?', (user_id,))
+        anek_num = cursor.fetchone()[0]
+        if anek_count == anek_num:
+            return False
+        elif anek_count > anek_num:
+            cursor.execute('SELECT anek_id, anek_text FROM anekitab LIMIT 1 OFFSET (SELECT vanek_num FROM viewed WHERE vuser_id = ?);', (user_id,))
+            anek = cursor.fetchone()
+            cursor.execute('UPDATE viewed SET vanek_num = vanek_num + 1 WHERE vuser_id = ?', (user_id,))
+            aneki.commit()
+            return anek
 
 
 
@@ -256,3 +262,36 @@ def top_anek_bd_select(indx):
     top_records = cursor.fetchall()
     aneki.close()
     return top_records
+
+
+
+def subscribebd(user_id, time_set):
+    aneki = connect_bd()
+    cursor = aneki.cursor()
+    cursor.execute('UPDATE viewed SET issub = 1 WHERE vuser_id = ?;', (user_id,))
+    cursor.execute('UPDATE viewed SET timesub = ? WHERE vuser_id = ?;', (time_set, user_id,))
+    aneki.commit()
+
+def unsubscribedbd(user_id):
+    aneki = connect_bd()
+    cursor = aneki.cursor()
+    cursor.execute('UPDATE viewed SET issub = 0 WHERE vuser_id = ?;', (user_id,))
+    aneki.commit()
+
+def check_sub(user_id):
+    aneki = connect_bd()
+    cursor = aneki.cursor()
+
+    cursor.execute('SELECT issub FROM viewed WHERE vuser_id = ?;', (user_id,))
+    result = cursor.fetchone()[0]
+    if result == 0:
+        return False
+    elif result == 1:
+        return True
+    
+def anektime():
+    aneki = connect_bd()
+    cursor = aneki.cursor()
+    cursor.execute('SELECT * FROM viewed WHERE issub = 1;')
+    info = cursor.fetchall()
+    return info
