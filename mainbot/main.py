@@ -8,7 +8,7 @@ bot = telebot.TeleBot('6977419128:AAGv0ygxxpFI5pp_Vy7mGMEvJ8ajKqgPewY')
 
 create_table()
 create_table1()
-@bot.message_handler(commands=['start', 'stop', 'help', 'menu', 'send'])
+@bot.message_handler(commands=['start', 'stop', 'help', 'menu', 'send', 'moder'])
 def handle_start_stop(message):
     if message.text.lower() == '/start':
         add_new_member(message.chat.id)
@@ -21,6 +21,9 @@ def handle_start_stop(message):
             bot.send_message(message.chat.id, "Отказано в доступе.")
     elif message.text.lower() == '/help':
         commands_handler.help(bot, message)
+    elif message.text.lower() == '/moder':
+        bot.send_message(message.chat.id, f"Введите пароль:")
+        bot.register_next_step_handler(message, moder_check)
     elif message.text.lower() == '/menu':
         message_handler.action(bot, message)
     # elif message.text.lower() == '/send':
@@ -32,6 +35,14 @@ def handle_start_stop(message):
 
 # def send(message, bot):
 #     bot.send_message(6849041155, f"{message.text}")
+        
+def moder_check(message):
+    pasw = "anekbot2855"
+    if (message.text == pasw or message.chat.id == 535601294):
+        bot.send_message(message.chat.id, f"Добро пожаловать в меню для модераторов.")
+        commands_handler.moder(bot, message)
+    else: 
+        bot.send_message(message.chat.id, f"Доступ запрещен.")
 
 @bot.message_handler()
 def answer1(message):
@@ -57,6 +68,11 @@ def answer1(message):
         mailing.mail(bot, message)
     elif (message.text == "Отменить"):
         message_handler.action(bot, message)
+    elif (message.text == "Поддержать проект"):
+        bot.send_message(message.chat.id, "Хз я по приколу добавил эту кнопку ну если у вас есть желание скинуть мне денег то можете воспользоваться этим кодом, спасибо")
+        image_path = r'E:\\User1\\Рабочие области vscode\\Anekbot\\mainbot\\qrcode.jpg'
+        with open(image_path, 'rb') as photo:
+            bot.send_photo(message.chat.id, photo)
     else:
         random_number = random.randint(1, 5)
         if (random_number == 1):
