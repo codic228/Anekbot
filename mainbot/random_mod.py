@@ -13,6 +13,8 @@ def random1(bot, message):
         message_handler.action(bot, message)
     else:
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+        btn0 = types.KeyboardButton("Ещё")
+        markup.row(btn0)
         btn1 = types.KeyboardButton("👍")
         btn2 = types.KeyboardButton("👎")
         markup.row(btn1, btn2)
@@ -21,6 +23,7 @@ def random1(bot, message):
         markup.row(btn3, btn4)
         bot.send_message(message.chat.id, f"{ran_an[1]}:\n{ran_an[2]}", reply_markup=markup)
         bot.register_next_step_handler(message,  lambda msg: chek_next_step(msg, ran_an[0], bot))
+
 
 
 
@@ -37,3 +40,6 @@ def chek_next_step(message, id, bot):
          complaints_plus(id)
          bot.send_message(message.chat.id, "Спасибо!")
          random1(bot, message)
+    elif (message.text == "Ещё"):
+        random1(bot, message)
+

@@ -2,7 +2,7 @@ from telebot import types
 
 def action(bot, message):
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    btn1 = types.KeyboardButton("ЧИТАТЬ АНЕКДОТЫ📖")
+    btn1 = types.KeyboardButton("АНЕКДОТ📖")
     markup.row(btn1)
     btn2 = types.KeyboardButton("Рассылка анекдотов💌")
     btn3 = types.KeyboardButton("Мои анекдоты🗂")

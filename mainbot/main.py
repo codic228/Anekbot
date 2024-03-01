@@ -56,7 +56,7 @@ def answer1(message):
         message_handler.action(bot, message)
     elif (message.text == 'Нет'):
         bot.send_message(message.chat.id, "Зачем написал тогда?")
-    elif (message.text == "ЧИТАТЬ АНЕКДОТЫ📖"):
+    elif (message.text == "АНЕКДОТ📖"):
         random_mod.random1(bot, message)
     elif (message.text == "Топ анекдотов🔝"):
         top_mod.top(bot, message)
@@ -77,6 +77,7 @@ def answer1(message):
     elif (message.text == "Поддержать проект💵"):
         bot.send_message(message.chat.id, "Хз я по приколу добавил эту кнопку ну если у вас есть желание скинуть мне денег то можете воспользоваться этими реквизитами:")
         bot.send_message(message.chat.id, "Сбербанк - 4274320100434896\nТинькофф - 2200700849511927")
+    
     else:
         random_number = random.randint(1, 5)
         if (random_number == 1):
