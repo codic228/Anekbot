@@ -1,7 +1,6 @@
 import telebot
 import time
 import datetime
-from random_mod import from_sending
 from random_modBD import act_not_random_anek
 from sendingBD import anektime, start_stop_sendingbd
 bot = telebot.TeleBot('6977419128:AAGv0ygxxpFI5pp_Vy7mGMEvJ8ajKqgPewY')
