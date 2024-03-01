@@ -1,5 +1,5 @@
 from telebot import types
-from sendingBD import start_stop_sendingbd
+from sendingBD import stop_sendingbd
 from moder import moder_start
 
 def start(bot, message):
@@ -12,7 +12,7 @@ def start(bot, message):
 def stop(bot, message):
 
     bot.reply_to(message, "Бот будет остановлен.")
-    start_stop_sendingbd()
+    stop_sendingbd()
     bot.stop_polling()
 
 def help(bot, message):

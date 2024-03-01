@@ -2,10 +2,10 @@ import telebot
 import time
 import datetime
 from random_modBD import act_not_random_anek
-from sendingBD import anektime, start_stop_sendingbd
+from sendingBD import anektime, start_sendingbd
 bot = telebot.TeleBot('6977419128:AAGv0ygxxpFI5pp_Vy7mGMEvJ8ajKqgPewY')
 
-start_stop_sendingbd()
+start_sendingbd()
 
 def send_message(user_id):
     anek = act_not_random_anek(user_id)
