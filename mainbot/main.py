@@ -1,6 +1,6 @@
 import telebot
 import commands_handler, message_handler, random_mod, top_mod, myanek_mod, mailing
-from base import create_table, create_table1, add_new_member
+from baseBD import create_table, create_table1, add_new_member
 from telebot import types
 import random
 bot = telebot.TeleBot('6977419128:AAGv0ygxxpFI5pp_Vy7mGMEvJ8ajKqgPewY')
@@ -26,15 +26,21 @@ def handle_start_stop(message):
         bot.register_next_step_handler(message, moder_check)
     elif message.text.lower() == '/menu':
         message_handler.action(bot, message)
-    # elif message.text.lower() == '/send':
-    #     if (message.chat.id == 535601294):
-    #         bot.send_message(message.chat.id, "Введи сообщение.")
-    #         bot.register_next_step_handler(message, lambda msg: send(msg, bot))
-    #     else:
-    #         bot.send_message(message.chat.id, "Отказано в доступе.")
+    elif message.text.lower() == '/send':
+        if (message.chat.id == 535601294):
+            bot.send_message(message.chat.id, "Введи id пользователя")
+            bot.register_next_step_handler(message, lambda msg: sel_usr(msg, bot))
+        else:
+            bot.send_message(message.chat.id, "Отказано в доступе.")
 
-# def send(message, bot):
-#     bot.send_message(6849041155, f"{message.text}")
+def sel_usr(message, bot):
+    user_id = message.text
+    bot.send_message(message.chat.id, "Введи сообщение")    
+    bot.register_next_step_handler(message, lambda msg: send(msg, bot, user_id))
+
+
+def send(message, bot, user_id):
+    bot.send_message(user_id, f"{message.text}")
         
 def moder_check(message):
     pasw = "anekbot2855"

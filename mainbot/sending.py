@@ -1,7 +1,8 @@
 import telebot
 import time
 import datetime
-from base import anektime, act_not_random_anek, start_stop_sendingbd
+from random_modBD import act_not_random_anek
+from sendingBD import anektime, start_stop_sendingbd
 bot = telebot.TeleBot('6977419128:AAGv0ygxxpFI5pp_Vy7mGMEvJ8ajKqgPewY')
 
 start_stop_sendingbd()
@@ -14,7 +15,7 @@ def send_message(user_id):
         bot.send_message(user_id, "Обалдеть, походу база данных наебнулась или просто в ней нет ни одного анекдота... Как только появиться я скину!")
     else:
         bot.send_message(user_id, "Твой ежедневный анекдот:")
-        bot.send_message(user_id, anek[1])
+        bot.send_message(user_id, f"{anek[1]}\n{anek[2]}")
 
 flag = True
 
@@ -33,10 +34,8 @@ def main():
             if user_time[count][3] == time_str:
                 # bot.send_message(535601294, f"Попытка отправить анек {user_time[count][0]}")
                 send_message(user_time[count][0])
-            if current_time.minute == 0:
-                bot.send_message(535601294, "Бот работает")
-        
-
+        if current_time.minute == 0:
+            bot.send_message(535601294, "Бот работает!")
 
         time.sleep(60)  # Подождать 60 секунд перед следующей проверкой
 

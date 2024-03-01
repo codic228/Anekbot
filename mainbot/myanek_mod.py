@@ -1,6 +1,6 @@
 import message_handler, mailing
 from telebot import types
-from base import my_anekbd, add_anekbd, delete_anekbd, change_anekbd, show_my_anekbd
+from my_anekBD import my_anekbd, add_anekbd, delete_anekbd, change_anekbd, show_my_anekbd
 
 def my_anek(bot, message):
     desired_user_id = message.chat.id
@@ -55,12 +55,19 @@ def my_anek_check(message, bot):
      
 
 def add_anek(bot, message):
-    bot.send_message(message.chat.id, "Название анекдота:")
+    markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    btn6 = types.KeyboardButton("Назад")
+    markup.row(btn6)
+    bot.send_message(message.chat.id, "Название анекдота:", reply_markup=markup)
     bot.register_next_step_handler(message,lambda msg: get_title(msg, bot))
 
 def get_title(message, bot):
+        
         if (message.text == "Назад"):
-            message_handler.action(bot, message)
+            my_anek(bot, message)
+        elif (message.text == "Добавить" or message.text == "Удалить" or message.text == "Изменить"):
+            bot.send_message(message.chat.id, "Выбери пожалуйста другое название.")
+            add_anek(bot, message)        
         else:
             title = message.text
             bot.send_message(message.chat.id, "Текст анекдота:")
@@ -119,7 +126,11 @@ def process_change_input(message, bot):
 
 def change_title(message, anekdot_number, bot):
         if (message.text == "Назад"):
-            message_handler.action(bot, message)
+            my_anek(bot, message)
+        elif (message.text == "Добавить" or message.text == "Удалить" or message.text == "Изменить"):
+            bot.send_message(message.chat.id, "Выбери пожалуйста другое название.")
+            message.text = anekdot_number
+            process_change_input(message, bot)      
         else:
             new_title = message.text
             bot.send_message(message.chat.id, "Введите новый текст анекдота:")

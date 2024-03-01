@@ -1,4 +1,4 @@
-from base import  subscribebd, check_sub, unsubscribedbd
+from mailingBD import  subscribebd, check_sub, unsubscribedbd
 import message_handler
 from telebot import types
 import re

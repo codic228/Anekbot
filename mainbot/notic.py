@@ -1,5 +1,5 @@
 import telebot
-from base import add_new_member
+from baseBD import add_new_member
 bot = telebot.TeleBot('6977419128:AAGv0ygxxpFI5pp_Vy7mGMEvJ8ajKqgPewY')
 
 @bot.message_handler()
