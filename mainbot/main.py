@@ -69,10 +69,8 @@ def answer1(message):
     elif (message.text == "Отменить"):
         message_handler.action(bot, message)
     elif (message.text == "Поддержать проект"):
-        bot.send_message(message.chat.id, "Хз я по приколу добавил эту кнопку ну если у вас есть желание скинуть мне денег то можете воспользоваться этим кодом, спасибо")
-        image_path = r'E:\\User1\\Рабочие области vscode\\Anekbot\\mainbot\\qrcode.jpg'
-        with open(image_path, 'rb') as photo:
-            bot.send_photo(message.chat.id, photo)
+        bot.send_message(message.chat.id, "Хз я по приколу добавил эту кнопку ну если у вас есть желание скинуть мне денег то можете воспользоваться этими реквизитами:")
+        bot.send_message(message.chat.id, "Сбербанк - 4274320100434896\nТинькофф - 2200700849511927")
     else:
         random_number = random.randint(1, 5)
         if (random_number == 1):
