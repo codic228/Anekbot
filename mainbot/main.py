@@ -56,11 +56,11 @@ def answer1(message):
         message_handler.action(bot, message)
     elif (message.text == 'Нет'):
         bot.send_message(message.chat.id, "Зачем написал тогда?")
-    elif (message.text == "Читать анекдоты"):
+    elif (message.text == "ЧИТАТЬ АНЕКДОТЫ📖"):
         random_mod.random1(bot, message)
-    elif (message.text == "Топ анекдотов"):
+    elif (message.text == "Топ анекдотов🔝"):
         top_mod.top(bot, message)
-    elif (message.text == "Мои анекдоты"):
+    elif (message.text == "Мои анекдоты🗂"):
         myanek_mod.my_anek(bot, message)
     elif (message.text == "Добавить"):
        myanek_mod.add_anek(bot, message)
@@ -70,11 +70,11 @@ def answer1(message):
         myanek_mod.delete_anek(bot, message)
     elif (message.text == "Изменить"):
         myanek_mod.change_anek(bot, message)
-    elif (message.text == "Рассылка анекдотов"):
+    elif (message.text == "Рассылка анекдотов💌"):
         mailing.mail(bot, message)
-    elif (message.text == "Отменить"):
+    elif (message.text == "Отменить"): 
         message_handler.action(bot, message)
-    elif (message.text == "Поддержать проект"):
+    elif (message.text == "Поддержать проект💵"):
         bot.send_message(message.chat.id, "Хз я по приколу добавил эту кнопку ну если у вас есть желание скинуть мне денег то можете воспользоваться этими реквизитами:")
         bot.send_message(message.chat.id, "Сбербанк - 4274320100434896\nТинькофф - 2200700849511927")
     else:
